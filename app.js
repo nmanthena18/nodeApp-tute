@@ -4,11 +4,13 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+const _ = require('lodash');
 var index = require('./routes/index');
+require('./config/config');
 //var users = require('./routes/users');
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,46 +27,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 //app.use('/users', users);
 
-
-
-
 // DB //
-
-
 //const db = require('./db/mongoClient');
-const mongoose = require('./db/mongoose');
-const {User} = require('./models/users');
+require('./models/usersMethods').userActions(app, _);
 
-
-app.post('/users', (req, res) =>{
-	var user = new User({
-		name:req.body.name,
-		email:req.body.email,
-	});	
-	user.save().then((doc) => {
-		res.send(doc)
-	}, (e) => {
-		res.status(400).send(e)
-	});
-});
-
-app.get('/users', (req, res) =>{
-	User.find().then( (users) =>{
-		res.send(users)
-	}, (e) =>{
-		console.log(e)
-	})
-});
-
-//get by id
-app.get('/getById/:id', (req, res) =>{
-	let id = req.params.id;
-	User.findById(id).then( (users) =>{
-		res.send(users)
-	}).catch((e)=>{
-		res.status(400).send(e)
-	})
-});
 
 
 // catch 404 and forward to error handler
