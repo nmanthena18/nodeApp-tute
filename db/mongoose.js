@@ -1,4 +1,5 @@
 const  mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/myDB-1');
+console.log(process.env.PORT)
+mongoose.connect(prosess.env.MONGODB_URI || 'mongodb://localhost:27017/myDB-1');
 module.exports = {mongoose}
