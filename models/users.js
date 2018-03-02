@@ -80,19 +80,13 @@ UserSchema.statics.findByToken = function(token){
 
 UserSchema.pre('save', function(next) {
 	var user = this;
-	if(user.isModified('password')){
-		bcrypt.genSalt(10, function(err, salt) {
-			bcrypt.hash(user.password, salt, function(err, hash) {
-				this.password = hash;
-			});
+	//if(user.isModified('password')){
+		bcrypt.hash(user.password, 10).then(function(hash) {
+			user.password = hash;
+			next();
 		});
-		console.log(user["password"])
-		next();
-	}else{
-		next();
-	}
-	console.log(user.password)
-  });
+	//}
+});
 
 var User = mongoose.model('User', UserSchema);
 
