@@ -78,14 +78,40 @@ UserSchema.statics.findByToken = function(token){
 	})
 }
 
+UserSchema.statics.findByCredentials = function(credu){
+	var User = this;
+	var email = credu.email
+	return User.findOne({email}).then( (user) => {
+
+		if(!user){
+			return Promise.reject();
+		}
+
+		bcrypt.compare(credu.password, user.password, (err, res) =>{
+			console.log(res)
+			console.log()
+			if(res){
+				return user
+			}else{
+				return null
+			}		
+		})
+	})
+}
+
+var count = 0
 UserSchema.pre('save', function(next) {
+	
 	var user = this;
-	//if(user.isModified('password')){
+	if(count == 0){		
 		bcrypt.hash(user.password, 10).then(function(hash) {
 			user.password = hash;
+			count++;
 			next();
 		});
-	//}
+	}else{
+		next();
+	}
 });
 
 var User = mongoose.model('User', UserSchema);
